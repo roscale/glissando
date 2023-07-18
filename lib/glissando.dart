@@ -3,20 +3,38 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class Glissando extends SingleChildRenderObjectWidget {
-  const Glissando({super.key, super.child});
+  final bool enabled;
+
+  const Glissando({
+    super.key,
+    required super.child,
+    this.enabled = true,
+  });
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return _GlissandoRenderBox();
+    return GlissandoRenderBox(
+      enabled: enabled,
+    );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context, GlissandoRenderBox renderObject) {
+    renderObject.enabled = enabled;
   }
 }
 
-class _GlissandoRenderBox extends RenderProxyBox {
+class GlissandoRenderBox extends RenderProxyBox {
+  bool enabled;
   final Map<int, HitTestResult> _previousHitTestResults = {};
+
+  GlissandoRenderBox({
+    required this.enabled,
+  });
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    if (event is! PointerMoveEvent) {
+    if (!enabled || event is! PointerMoveEvent) {
       super.handleEvent(event, entry);
       return;
     }
@@ -32,12 +50,31 @@ class _GlissandoRenderBox extends RenderProxyBox {
     final to = firstTarget(hitTestResult);
 
     if (to != null && from != to) {
-      {
-        var fake = PointerCancelEvent(pointer: event.pointer);
-        GestureBinding.instance.handlePointerEvent(fake);
-      }
+      PointerEvent fake = PointerCancelEvent(
+        timeStamp: event.timeStamp,
+        pointer: event.pointer,
+        kind: event.kind,
+        device: event.device,
+        position: event.position,
+        buttons: event.buttons,
+        obscured: event.obscured,
+        pressureMin: event.pressureMin,
+        pressureMax: event.pressureMax,
+        distance: event.distance,
+        distanceMax: event.distanceMax,
+        size: event.size,
+        radiusMajor: event.radiusMajor,
+        radiusMinor: event.radiusMinor,
+        radiusMin: event.radiusMin,
+        radiusMax: event.radiusMax,
+        orientation: event.orientation,
+        tilt: event.tilt,
+        embedderId: event.embedderId,
+      );
 
-      var fake = PointerDownEvent(
+      GestureBinding.instance.handlePointerEvent(fake);
+
+      fake = PointerDownEvent(
         timeStamp: event.timeStamp,
         pointer: event.pointer,
         kind: event.kind,

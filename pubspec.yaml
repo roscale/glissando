@@ -1,6 +1,6 @@
 name: glissando
-description: Slide over widgets while the pointer is down.
-version: 0.0.2
+description: Slide across widgets while the pointer is down.
+version: 0.0.3
 repository: https://github.com/roscale/glissando
 issue_tracker: https://github.com/roscale/glissando/issues
 

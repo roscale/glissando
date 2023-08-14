@@ -1,11 +1,11 @@
 name: glissando
 description: Slide across widgets while the pointer is down.
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/roscale/glissando
 issue_tracker: https://github.com/roscale/glissando/issues
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:

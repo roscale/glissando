@@ -2,7 +2,7 @@
 
 Slide across widgets while the pointer is down.
 
-<img src="https://github.com/roscale/glissando/blob/master/doc/keyboard_slide.gif?raw=true" />
+<img src="https://github.com/roscale/glissando/blob/master/doc/keyboard_slide.gif?raw=true" alt="Sliding the finger across the keys of a virtual keyboard"/>
 
 ## Usage
 
@@ -46,5 +46,9 @@ void main() {
 
 When you slide from widget A to widget B, widget A will receive a pointer cancel
 event, while widget B will receive a pointer down event.
+
+The property
+`PointerEvent.isGlissandoEvent` is available for determining if an event was synthesized by this
+package.
 
 When you lift the pointer, the widget that last got the down event will get the pointer up event.

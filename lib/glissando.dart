@@ -50,7 +50,7 @@ class GlissandoRenderBox extends RenderProxyBox {
     final to = firstTarget(hitTestResult);
 
     if (to != null && from != to) {
-      PointerEvent fake = PointerCancelEvent(
+      PointerEvent syntheticEvent = PointerCancelEvent(
         timeStamp: event.timeStamp,
         pointer: event.pointer,
         kind: event.kind,
@@ -71,10 +71,11 @@ class GlissandoRenderBox extends RenderProxyBox {
         tilt: event.tilt,
         embedderId: event.embedderId,
       );
+      _syntheticEvents[syntheticEvent] = true;
 
-      GestureBinding.instance.handlePointerEvent(fake);
+      GestureBinding.instance.handlePointerEvent(syntheticEvent);
 
-      fake = PointerDownEvent(
+      syntheticEvent = PointerDownEvent(
         timeStamp: event.timeStamp,
         pointer: event.pointer,
         kind: event.kind,
@@ -95,11 +96,26 @@ class GlissandoRenderBox extends RenderProxyBox {
         tilt: event.tilt,
         embedderId: event.embedderId,
       );
+      _syntheticEvents[syntheticEvent] = true;
 
       Future.microtask(() {
-        GestureBinding.instance.handlePointerEvent(fake);
+        GestureBinding.instance.handlePointerEvent(syntheticEvent);
       });
     }
     _previousHitTestResults[event.pointer] = hitTestResult;
+  }
+}
+
+final _syntheticEvents = Expando<bool>();
+
+extension GlissandoEvent on PointerEvent {
+  bool get isGlissandoEvent {
+    PointerEvent event = this;
+    while (original != null && !identical(event, original)) {
+      // Walk up the chain of events to get the original one because Flutter might wrap it in other
+      // pointer events like `_TransformedPointerDownEvent`.
+      event = original!;
+    }
+    return _syntheticEvents[event] == true;
   }
 }
